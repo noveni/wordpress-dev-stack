@@ -32,9 +32,11 @@ production_build:
   only:
     - production
   script:
+    - echo "Here we are on build step"
 
 production_deploy:
   stage: deploy
   only: 
     - production
   script:
+    - echo "Here we are on build step"
