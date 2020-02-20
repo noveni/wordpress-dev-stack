@@ -177,16 +177,12 @@ temp/
 
 # End of https://www.gitignore.io/api/osx,linux,windows,node
 
-plugins/*
-wp/*
-themes/*
+plugins/
+wp/
+themes/
+wpdevstack/
 
 # Only because we keep docker db volume always
 /.db
 
-node_modules/
 .vscode/
-
-themes/ecrannoir/assets/*
-package-lock.json
-themes/ecrannoir/blocks/build/*

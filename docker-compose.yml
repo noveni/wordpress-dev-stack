@@ -1,0 +1,83 @@
+version: '3.1'
+
+services:
+  wp:
+    image: noveni/wordpress:5.3-php7.3-apache-dev
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: local_db_user
+      WORDPRESS_DB_PASSWORD: noveni
+      WORDPRESS_DB_NAME: local_wp_db
+      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
+    volumes:
+      - ./wp:/var/www/html
+      - ./themes:/var/www/html/wp-content/themes
+      - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
+      - ./plugins:/var/www/html/wp-content/plugins
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=local_traefik_webgateway
+      - traefik.http.routers.${PROJECT_NAME}.rule=Host(`${URL}`)
+      - traefik.http.routers.${PROJECT_NAME}.entrypoints=http
+      - traefik.http.routers.${PROJECT_NAME}-secure.rule=Host(`${URL}`)
+      - traefik.http.routers.${PROJECT_NAME}-secure.entrypoints=https
+      - traefik.http.routers.${PROJECT_NAME}-secure.tls=true
+    networks:
+      - web
+      - default
+
+  db:
+    image: mysql:5.6
+    restart: always
+    environment:
+      MYSQL_DATABASE: local_wp_db
+      MYSQL_USER: local_db_user
+      MYSQL_PASSWORD: noveni
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - ./.db:/var/lib/mysql
+    networks:
+      - default
+
+  phpmyadmin:
+    image: noveni/phpmyadmin
+    restart: always
+    environment:
+      MYSQL_USER: "local_db_user"
+      MYSQL_PASSWORD: "noveni"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=local_traefik_webgateway
+      - traefik.http.routers.phpmyadmin-${PROJECT_NAME}-secure.rule=Host(`phpmyadmin.${URL}`)
+      - traefik.http.routers.phpmyadmin-${PROJECT_NAME}-secure.entrypoints=https
+      - traefik.http.routers.phpmyadmin-${PROJECT_NAME}-secure.tls=true
+    depends_on:
+      - db
+    links:
+      - db
+    networks:
+      - web
+      - default
+
+  # USAGE: docker-compose run --rm wpcli plugin list
+  wpcli:
+    image: wordpress:cli
+    depends_on:
+      - db
+      - wp
+    volumes:
+      - ./wp:/var/www/html
+      - ./themes:/var/www/html/wp-content/themes
+      - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
+      - ./plugins:/var/www/html/wp-content/plugins
+    networks:
+      - default
+
+
+networks:
+  web:
+    external:
+      name: local_traefik_webgateway
+  default:
+    driver: bridge
