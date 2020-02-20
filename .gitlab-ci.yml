@@ -1,0 +1,38 @@
+# Private repo are located on Gitlab CI
+# This script exist here for archive and starter
+image: "ruby:2.6"
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - build
+  - test
+  - deploy
+  
+staging_build:
+  stage: build
+  only: 
+    - staging
+  script:
+    - echo "Here we are on build step"
+
+staging_deploy:
+  stage: deploy
+  only: 
+    - staging
+  script:
+    - echo "Here we are on build step"
+
+production_build:
+  stage: build
+  only:
+    - production
+  script:
+
+production_deploy:
+  stage: deploy
+  only: 
+    - production
+  script:
