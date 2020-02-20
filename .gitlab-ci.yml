@@ -15,6 +15,7 @@ staging_build:
   stage: build
   only: 
     - staging
+    - ci-feature
   script:
     - echo "Here we are on build step"
 
@@ -22,6 +23,7 @@ staging_deploy:
   stage: deploy
   only: 
     - staging
+    - ci-feature
   script:
     - echo "Here we are on build step"
 
