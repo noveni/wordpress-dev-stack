@@ -180,7 +180,7 @@ temp/
 plugins/
 wp/
 themes/
-# wpdevstack/
+wpdevstack/
 
 # Only because we keep docker db volume always
 /.db

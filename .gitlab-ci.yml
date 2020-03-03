@@ -20,6 +20,7 @@ staging_build:
     - ls
     - source .env
     - echo $PROJECT_NAME
+    - echo $THEME_NAME
     - echo "Here we are on build step"
 
 staging_deploy:
