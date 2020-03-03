@@ -12,7 +12,6 @@ services:
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
     volumes:
       - ./wp:/var/www/html
-      - ./themes:/var/www/html/wp-content/themes
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
       - ./plugins:/var/www/html/wp-content/plugins
     labels:
@@ -68,7 +67,6 @@ services:
       - wp
     volumes:
       - ./wp:/var/www/html
-      - ./themes:/var/www/html/wp-content/themes
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
       - ./plugins:/var/www/html/wp-content/plugins
     networks:
