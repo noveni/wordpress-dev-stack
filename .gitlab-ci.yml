@@ -3,6 +3,8 @@
 image: "node:12-alpine"
 variables:
   REMOTE_DESTINATION_DIR: ./wp/wp-content/themes
+  CI_SYNC_TYPE: FTP
+  STAGE_URL: https://wpdevstack.ecrannoir.be
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -32,13 +34,19 @@ staging_build:
   artifacts:
     paths:
       - ./wpdevstack/dist/
+  environment:
+    name: stage
+    url: $STAGE_URL
 
 
-staging_deploy:
+staging_ftp_deploy:
   stage: deploy
   only: 
-    - staging
-    - ci-feature
+    refs:
+      - staging
+      - ci-feature
+    variables:
+      - $CI_SYNC_TYPE == "FTP"
   before_script:
     - source .env
     - apk --no-cache add lftp
@@ -46,17 +54,7 @@ staging_deploy:
     - echo "Here we are on Deploy step"
     - lftp --version
     - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror -X package-lock.json --reverse --verbose --delete $THEME_NAME $REMOTE_DESTINATION_DIR/; bye"
-
-production_build:
-  stage: build
-  only:
-    - production
-  script:
-    - echo "Here we are on build step"
-
-production_deploy:
-  stage: deploy
-  only: 
-    - production
-  script:
-    - echo "Here we are on build step"
+  environment:
+    name: stage
+    url: $STAGE_URL
+  
