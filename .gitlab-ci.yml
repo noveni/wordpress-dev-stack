@@ -1,6 +1,12 @@
 # Private repo are located on Gitlab CI
 # This script exist here for archive and starter
-image: "ruby:2.6"
+image: "node:12-alpine"
+
+before_script:
+  - apk --no-cache add lftp
+  - lftp --version
+  - ls
+  - source .env
 
 cache:
   paths:
