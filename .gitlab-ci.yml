@@ -45,7 +45,7 @@ staging_deploy:
   script:
     - echo "Here we are on Deploy step"
     - lftp --version
-    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete $THEME_NAME $REMOTE_DESTINATION_DIR/$THEME_NAME/; bye"
+    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete $THEME_NAME $REMOTE_DESTINATION_DIR/; bye"
 
 production_build:
   stage: build
