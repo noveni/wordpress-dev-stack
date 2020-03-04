@@ -1,6 +1,8 @@
 # Private repo are located on Gitlab CI
 # This script exist here for archive and starter
 image: "node:12-alpine"
+variables:
+  REMOTE_DESTINATION_DIR: ./wp/wp-content/themes
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -44,7 +46,7 @@ staging_deploy:
   script:
     - echo "Here we are on Deploy step"
     - lftp --version
-    - ls
+    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete $THEME_NAME $REMOTE_DESTINATION_DIR/$THEME_NAME/; bye"
 
 production_build:
   stage: build
