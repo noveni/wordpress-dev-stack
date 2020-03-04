@@ -2,10 +2,6 @@
 # This script exist here for archive and starter
 image: "node:12-alpine"
 
-before_script:
-  - apk --no-cache add lftp
-  - source .env
-
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
@@ -22,19 +18,27 @@ staging_build:
   only: 
     - staging
     - ci-feature
+  before_script:
+    - source .env
+    - cd $THEME_NAME
+    - ls
   script:
     - echo "Here we are on build step"
     - echo $PROJECT_NAME
     - echo $THEME_NAME
-    - lftp --version
+
 
 staging_deploy:
   stage: deploy
   only: 
     - staging
     - ci-feature
+  before_script:
+    - source .env
+    - apk --no-cache add lftp
   script:
-    - echo "Here we are on build step"
+    - echo "Here we are on Deploy step"
+    - lftp --version
 
 production_build:
   stage: build
