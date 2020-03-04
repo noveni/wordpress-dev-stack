@@ -68,7 +68,7 @@ staging_rsync_deploy:
       - $CI_SYNC_TYPE == "RSYNC"
   before_script:
     - source .env
-    - apk --no-cache add rsync openssh-client -y
+    - apk --no-cache add rsync
   script:
     - echo "Here we are on Deploy step by ftp"
   environment:
