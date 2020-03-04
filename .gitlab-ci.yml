@@ -29,7 +29,7 @@ staging_build:
     - echo $THEME_NAME
   artifacts:
     paths:
-      - ${THEME_NAME}/dist/
+      - ./wpdevstack/dist/
 
 
 staging_deploy:
@@ -40,6 +40,7 @@ staging_deploy:
   before_script:
     - source .env
     - apk --no-cache add lftp
+    - cd $THEME_NAME
   script:
     - echo "Here we are on Deploy step"
     - lftp --version
