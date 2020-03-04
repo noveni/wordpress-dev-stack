@@ -24,6 +24,7 @@ staging_build:
     - ls
   script:
     - echo "Here we are on build step"
+    - ls
     - echo $PROJECT_NAME
     - echo $THEME_NAME
 
