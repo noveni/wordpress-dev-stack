@@ -5,7 +5,6 @@ image: "node:12-alpine"
 before_script:
   - apk --no-cache add lftp
   - source .env
-  - echo $THEME_NAME
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -23,7 +22,11 @@ staging_build:
   only: 
     - staging
     - ci-feature
+  before_script:
+    - cd ${THEME_NAME}/
+    - ls
   script:
+    - ls
     - echo "Here we are on build step"
     - echo $PROJECT_NAME
     - echo $THEME_NAME
