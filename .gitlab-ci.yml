@@ -3,7 +3,7 @@
 image: "node:12-alpine"
 variables:
   REMOTE_DESTINATION_DIR: ./wp/wp-content/themes
-  CI_SYNC_TYPE: FTP
+  CI_SYNC_TYPE: RSYNC
   STAGE_URL: https://wpdevstack.ecrannoir.be
 
 cache:
@@ -17,44 +17,60 @@ stages:
   - test
   - deploy
   
-staging_build:
-  stage: build
-  only: 
-    - staging
-    - ci-feature
-  before_script:
-    - source .env
-    - cd $THEME_NAME
-    - npm install
-  script:
-    - echo "Here we are on build step"
-    - npm run build
-    - echo $PROJECT_NAME
-    - echo $THEME_NAME
-  artifacts:
-    paths:
-      - ./wpdevstack/dist/
-  environment:
-    name: stage
-    url: $STAGE_URL
+# staging_build:
+#   stage: build
+#   only: 
+#     - staging
+#     - ci-feature
+#   before_script:
+#     - source .env
+#     - cd $THEME_NAME
+#     - npm install
+#   script:
+#     - echo "Here we are on build step"
+#     - npm run build
+#     - echo $PROJECT_NAME
+#     - echo $THEME_NAME
+#   artifacts:
+#     paths:
+#       - ./wpdevstack/dist/
+#   environment:
+#     name: stage
+#     url: $STAGE_URL
 
 
-staging_ftp_deploy:
+# staging_ftp_deploy:
+#   stage: deploy
+#   only: 
+#     refs:
+#       - staging
+#       - ci-feature
+#     variables:
+#       - $CI_SYNC_TYPE == "FTP"
+#   before_script:
+#     - source .env
+#     - apk --no-cache add lftp
+#   script:
+#     - echo "Here we are on Deploy step by ftp"
+#     - lftp --version
+#     - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror -X package-lock.json --reverse --verbose --delete $THEME_NAME $REMOTE_DESTINATION_DIR/; bye"
+#   environment:
+#     name: stage
+#     url: $STAGE_URL
+  
+staging_rsync_deploy:
   stage: deploy
-  only: 
+  only:
     refs:
       - staging
       - ci-feature
     variables:
-      - $CI_SYNC_TYPE == "FTP"
+      - $CI_SYNC_TYPE == "RSYNC"
   before_script:
     - source .env
-    - apk --no-cache add lftp
+    - apk --no-cache add rsync openssh-client -y
   script:
-    - echo "Here we are on Deploy step"
-    - lftp --version
-    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror -X package-lock.json --reverse --verbose --delete $THEME_NAME $REMOTE_DESTINATION_DIR/; bye"
+    - echo "Here we are on Deploy step by ftp"
   environment:
     name: stage
     url: $STAGE_URL
-  
