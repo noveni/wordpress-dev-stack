@@ -43,6 +43,7 @@ staging_deploy:
   script:
     - echo "Here we are on Deploy step"
     - lftp --version
+    - ls
 
 production_build:
   stage: build
