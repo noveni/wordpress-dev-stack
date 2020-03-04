@@ -4,14 +4,14 @@ image: "node:12-alpine"
 
 before_script:
   - apk --no-cache add lftp
-  - lftp --version
-  - ls
   - source .env
   - echo $THEME_NAME
 
 cache:
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - $THEME_NAME/node_modules/
+    - .npm/
+    - node_modules/
 
 stages:
   - build
@@ -24,11 +24,10 @@ staging_build:
     - staging
     - ci-feature
   script:
-    - ls
-    - source .env
+    - echo "Here we are on build step"
     - echo $PROJECT_NAME
     - echo $THEME_NAME
-    - echo "Here we are on build step"
+    - lftp --version
 
 staging_deploy:
   stage: deploy
