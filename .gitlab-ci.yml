@@ -46,7 +46,7 @@ staging_ftp_deploy:
       - staging
       - ci-feature
     variables:
-      - $CI_SYNC_TYPE == "SSH"
+      - $CI_SYNC_TYPE == "FTP"
   before_script:
     - source .env
     - apk --no-cache add lftp
