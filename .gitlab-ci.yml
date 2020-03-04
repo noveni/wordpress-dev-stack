@@ -29,7 +29,7 @@ staging_build:
     - echo $THEME_NAME
   artifacts:
     paths:
-      - dist/
+      - ${THEME_NAME}/dist/
 
 
 staging_deploy:
