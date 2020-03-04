@@ -23,7 +23,7 @@ staging_build:
     - staging
     - ci-feature
   before_script:
-    - cd ${THEME_NAME}/
+    - cd "$THEME_NAME/"
     - ls
   script:
     - ls
