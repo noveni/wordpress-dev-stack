@@ -21,12 +21,15 @@ staging_build:
   before_script:
     - source .env
     - cd $THEME_NAME
-    - ls
+    - npm install
   script:
     - echo "Here we are on build step"
-    - ls
+    - npm run build
     - echo $PROJECT_NAME
     - echo $THEME_NAME
+  artifacts:
+    paths:
+      - dist/
 
 
 staging_deploy:
