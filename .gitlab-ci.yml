@@ -7,10 +7,11 @@ before_script:
   - lftp --version
   - ls
   - source .env
+  - echo $THEME_NAME
 
 cache:
   paths:
-    - node_modules/
+    - $THEME_NAME/node_modules/
 
 stages:
   - build
