@@ -95,10 +95,9 @@ init_wp:
     - apk --no-cache add curl
   script:
     - echo "Here we are on init wp step"
-    - |
-      set ex; \
-      curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"; \
-      echo "${WORDPRESS_SHA1} *wordpress.tar.gz" | sha1sum -c -; \
-      tar -xzf wordpress.tar.gz -C ./new_wp; \
-      rm wordpress.tar.gz; \
+    - set ex
+    - curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"
+    - echo "${WORDPRESS_SHA1} *wordpress.tar.gz" | sha1sum -c -
+    - tar -xzf wordpress.tar.gz -C ./new_wp
+    - rm wordpress.tar.gz
     - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete new_wp wp; bye"
