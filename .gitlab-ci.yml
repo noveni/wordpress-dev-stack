@@ -13,6 +13,7 @@ cache:
     - node_modules/
 
 stages:
+  - install
   - build
   - test
   - deploy
@@ -81,7 +82,7 @@ staging_build:
 #     url: $STAGE_URL
 
 init_wp:
-  stage: .pre
+  stage: install
   environment:
     name: stage
     url: $STAGE_URL
@@ -92,5 +93,6 @@ init_wp:
     - apk --no-cache add curl
   script:
     - echo "Here we are on init wp step"
-    - ls
-    - /bin/sh wpinit.sh
+    - set ex; \
+    curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz";
+
