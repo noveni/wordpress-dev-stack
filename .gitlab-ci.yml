@@ -94,6 +94,6 @@ init_wp:
     - apk --no-cache add curl
   script:
     - echo "Here we are on init wp step"
-    - set ex; \
-    curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz";
+    - set ex; |
+      curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"
 
