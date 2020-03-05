@@ -5,6 +5,7 @@ variables:
   REMOTE_DESTINATION_DIR: ./wp/wp-content/themes
   CI_SYNC_TYPE: RSYNC
   STAGE_URL: https://wpdevstack.ecrannoir.be
+  WORDPRESS_VERSION: 5.3.2
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
