@@ -85,7 +85,6 @@ init_wp:
   environment:
     name: stage
     url: $STAGE_URL
-  when: manual
   only: 
     - ci-feature
   before_script:
