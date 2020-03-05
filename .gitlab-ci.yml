@@ -74,7 +74,7 @@ staging_rsync_deploy:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
     - echo "Here we are on Deploy step by rsync"
-    - ssh-add <(echo "$STAGING_PRIVATE_KEY")
+    - echo "$STAGING_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - rsync -azPqv -e 'ssh -p 44925' $THEME_NAME $STAGING_SSH_USER@$STAGING_SSH_HOST:$REMOTE_DESTINATION_DIR
   environment:
     name: stage
