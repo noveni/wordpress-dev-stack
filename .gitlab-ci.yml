@@ -79,3 +79,16 @@ staging_rsync_deploy:
   environment:
     name: stage
     url: $STAGE_URL
+
+init_wp:
+  stage: deploy
+  environment:
+    name: stage
+    url: $STAGE_URL
+  when: manual
+  only: 
+    - ci-feature
+  before_script:
+    - source .env
+  script:
+    - echo "Here we are on init wp step"
