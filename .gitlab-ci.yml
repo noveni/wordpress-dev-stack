@@ -92,7 +92,7 @@ init_wp:
     - ci-feature
   before_script:
     - source .env
-    - apk --no-cache add curl
+    - apk --no-cache add lftp curl
   script:
     - echo "Here we are on init wp step"
     - set ex
