@@ -101,4 +101,4 @@ init_wp:
     - tar -xzf wordpress.tar.gz
     - ls
     - rm wordpress.tar.gz
-    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete new_wp wp; bye"
+    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete wordpress wp; bye"
