@@ -17,26 +17,26 @@ stages:
   - test
   - deploy
   
-# staging_build:
-#   stage: build
-#   only: 
-#     - staging
-#     - ci-feature
-#   before_script:
-#     - source .env
-#     - cd $THEME_NAME
-#     - npm install
-#   script:
-#     - echo "Here we are on build step"
-#     - npm run build
-#     - echo $PROJECT_NAME
-#     - echo $THEME_NAME
-#   artifacts:
-#     paths:
-#       - ./wpdevstack/dist/
-#   environment:
-#     name: stage
-#     url: $STAGE_URL
+staging_build:
+  stage: build
+  only: 
+    - staging
+    - ci-feature
+  before_script:
+    - source .env
+    - cd $THEME_NAME
+    - npm install
+  script:
+    - echo "Here we are on build step"
+    - npm run build
+    - echo $PROJECT_NAME
+    - echo $THEME_NAME
+  artifacts:
+    paths:
+      - ./wpdevstack/dist/
+  environment:
+    name: stage
+    url: $STAGE_URL
 
 
 # staging_ftp_deploy:
