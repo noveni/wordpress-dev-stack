@@ -78,7 +78,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
-      - traefik.http.services.${PROJECT_NAME}-{service}mailhog.loadbalancer.server.port=8025
+      - traefik.http.services.${PROJECT_NAME}-mailhog.loadbalancer.server.port=8025
       - traefik.http.routers.${PROJECT_NAME}-mailhog.rule=Host(`mailhog.${URL}`)
       - traefik.http.routers.${PROJECT_NAME}-mailhog.entrypoints=http
     networks:
