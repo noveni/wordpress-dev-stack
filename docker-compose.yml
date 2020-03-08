@@ -72,6 +72,22 @@ services:
     networks:
       - default
 
+  smtp:
+    image: mailhog/mailhog:latest
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=local_traefik_webgateway
+      - traefik.http.routers.mailhog-${PROJECT_NAME}.rule=Host(`${URL}`)
+      - traefik.http.routers.mailhog-${PROJECT_NAME}-secure.entrypoints=mailhog
+      - traefik.http.routers.mailhog-${PROJECT_NAME}-secure.tls=true
+    networks:
+      - web
+      - default
+
 
 networks:
   web:
