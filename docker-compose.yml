@@ -48,9 +48,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
-      - traefik.http.routers.phpmyadmin-${PROJECT_NAME}-secure.rule=Host(`phpmyadmin.${URL}`)
-      - traefik.http.routers.phpmyadmin-${PROJECT_NAME}-secure.entrypoints=https
-      - traefik.http.routers.phpmyadmin-${PROJECT_NAME}-secure.tls=true
+      - traefik.http.routers.${PROJECT_NAME}-phpmyadmin-secure.rule=Host(`phpmyadmin.${URL}`)
+      - traefik.http.routers.${PROJECT_NAME}-phpmyadmin-secure.entrypoints=https
+      - traefik.http.routers.${PROJECT_NAME}-phpmyadmin-secure.tls=true
     depends_on:
       - db
     links:
@@ -81,9 +81,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
-      - traefik.http.routers.mailhog-${PROJECT_NAME}.rule=Host(`${URL}`)
-      - traefik.http.routers.mailhog-${PROJECT_NAME}-secure.entrypoints=mailhog
-      - traefik.http.routers.mailhog-${PROJECT_NAME}-secure.tls=true
+      - traefik.http.routers.${PROJECT_NAME}-mailhog.rule=Host(`mailhog.${URL}`)
+      - traefik.http.routers.${PROJECT_NAME}-mailhog.entrypoints=http
     networks:
       - web
       - default
