@@ -1,0 +1,101 @@
+# Private repo are located on Gitlab CI
+# This script exist here for archive and starter
+image: "node:12-alpine"
+variables:
+  REMOTE_DESTINATION_DIR: ./wp/wp-content/themes
+  CI_SYNC_TYPE: RSYNC
+  STAGE_URL: https://wpdevstack.ecrannoir.be
+  WORDPRESS_VERSION: 5.3.2
+  WORDPRESS_SHA1: fded476f112dbab14e3b5acddd2bcfa550e7b01b
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+    - node_modules/
+
+stages:
+  - install
+  - build
+  - test
+  - deploy
+  
+staging_build:
+  stage: build
+  only: 
+    - staging
+  before_script:
+    - source .env
+    - cd $THEME_NAME
+    - npm install
+  script:
+    - echo "Here we are on build step"
+    - npm run build
+    - echo $PROJECT_NAME
+    - echo $THEME_NAME
+  artifacts:
+    paths:
+      - ./wpdevstack/dist/
+  environment:
+    name: stage
+    url: $STAGE_URL
+
+
+staging_ftp_deploy:
+  stage: deploy
+  only: 
+    refs:
+      - staging
+    variables:
+      - $CI_SYNC_TYPE == "FTP"
+  before_script:
+    - source .env
+    - apk --no-cache add lftp
+  script:
+    - echo "Here we are on Deploy step by ftp"
+    - lftp --version
+    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror -X package-lock.json --reverse --verbose --delete $THEME_NAME $REMOTE_DESTINATION_DIR/; bye"
+  environment:
+    name: stage
+    url: $STAGE_URL
+  
+staging_rsync_deploy:
+  stage: deploy
+  only:
+    refs:
+      - staging
+    variables:
+      - $CI_SYNC_TYPE == "RSYNC"
+  before_script:
+    - source .env
+    - 'which ssh-agent || ( apk --no-cache add rsync openssh-client )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - echo "Here we are on Deploy step by rsync"
+    - echo "$STAGING_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - rsync -azPqv -e 'ssh -p 44925' $THEME_NAME $STAGING_SSH_USER@$STAGING_SSH_HOST:$REMOTE_DESTINATION_DIR
+  environment:
+    name: stage
+    url: $STAGE_URL
+
+init_wp:
+  stage: install
+  environment:
+    name: stage
+    url: $STAGE_URL
+  only: 
+    - install
+  before_script:
+    - source .env
+    - apk --no-cache add lftp curl
+  script:
+    - echo "Here we are on init wp step"
+    - set ex
+    - curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"
+    - echo "${WORDPRESS_SHA1} *wordpress.tar.gz" | sha1sum -c -
+    - tar -xzf wordpress.tar.gz
+    - ls
+    - rm wordpress.tar.gz
+    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete wordpress wp; bye"
