@@ -11,9 +11,11 @@ services:
       WORDPRESS_DB_NAME: local_wp_db
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
     volumes:
-      - ./wp:/var/www/html
+      - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
-      - ./plugins:/var/www/html/wp-content/plugins
+      - ./wp/wp-content/uploads:/var/www/html/wp-content/uploads
+      - ./wp/wp-content/plugins:/var/www/html/wp-content/plugins
+      - ./wp/wp-content/languages:/var/www/html/wp-content/languages
     labels:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
@@ -66,9 +68,11 @@ services:
       - db
       - wp
     volumes:
-      - ./wp:/var/www/html
+      - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
-      - ./plugins:/var/www/html/wp-content/plugins
+      - ./wp/wp-content/uploads:/var/www/html/wp-content/uploads
+      - ./wp/wp-content/plugins:/var/www/html/wp-content/plugins
+      - ./wp/wp-content/languages:/var/www/html/wp-content/languages
     networks:
       - default
 

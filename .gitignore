@@ -180,8 +180,9 @@ temp/
 plugins/
 wp/
 themes/
+wp-core/
 
 # Only because we keep docker db volume always
 /.db
 
-.vscode/
+# .vscode/
