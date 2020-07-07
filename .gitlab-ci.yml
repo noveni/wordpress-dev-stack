@@ -4,7 +4,6 @@ image: "tetraweb/php"
 variables:
   STAGING_REMOTE_DESTINATION_DIR: ./wp/wp-content
   PRODUCTION_REMOTE_DESTINATION_DIR: ./wp/wp-content
-  REMOTE_DESTINATION_DIR: ./wp/wp-content/themes
   CI_SYNC_TYPE: RSYNC
   STAGE_URL: https://wpdevstack.ecrannoir.be
   PRODUCTION_URL: https://wpdevstack.ecrannoir.be
@@ -17,7 +16,6 @@ cache:
     - node_modules/
 
 stages:
-  - install
   - build
   - test
   - deploy
@@ -66,8 +64,8 @@ staging_ftp_deploy:
     - echo "Here we are on Deploy step by ftp"
     - rm -rf $THEME_NAME/src/ $THEME_NAME/package.json $THEME_NAME/package-lock.json $THEME_NAME/webpack.config.js $THEME_NAME/.stylelintrc.json
     - lftp --version
-    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete $THEME_NAME $REMOTE_DESTINATION_DIR/themes; bye"
-    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete wp/wp-content/plugins/ $REMOTE_DESTINATION_DIR/plugins; bye"
+    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete $THEME_NAME $STAGING_REMOTE_DESTINATION_DIR/themes; bye"
+    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete wp/wp-content/plugins/ $STAGING_REMOTE_DESTINATION_DIR/plugins; bye"
   environment:
     name: stage
     url: $STAGE_URL
@@ -95,23 +93,3 @@ staging_rsync_deploy:
   environment:
     name: stage
     url: $STAGE_URL
-
-init_wp:
-  stage: install
-  environment:
-    name: stage
-    url: $STAGE_URL
-  only: 
-    - install
-  before_script:
-    - source .env
-    - apk --no-cache add lftp curl
-  script:
-    - echo "Here we are on init wp step"
-    - set ex
-    - curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"
-    - echo "${WORDPRESS_SHA1} *wordpress.tar.gz" | sha1sum -c -
-    - tar -xzf wordpress.tar.gz
-    - ls
-    - rm wordpress.tar.gz
-    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete wordpress wp; bye"
