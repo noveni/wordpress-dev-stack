@@ -20,9 +20,9 @@ services:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
       - traefik.http.routers.${PROJECT_NAME}.rule=Host(`${URL}`)
-      - traefik.http.routers.${PROJECT_NAME}.entrypoints=http
+      - traefik.http.routers.${PROJECT_NAME}.entrypoints=web
       - traefik.http.routers.${PROJECT_NAME}-secure.rule=Host(`${URL}`)
-      - traefik.http.routers.${PROJECT_NAME}-secure.entrypoints=https
+      - traefik.http.routers.${PROJECT_NAME}-secure.entrypoints=websecure
       - traefik.http.routers.${PROJECT_NAME}-secure.tls=true
     networks:
       - web
@@ -51,7 +51,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
       - traefik.http.routers.${PROJECT_NAME}-phpmyadmin-secure.rule=Host(`phpmyadmin.${URL}`)
-      - traefik.http.routers.${PROJECT_NAME}-phpmyadmin-secure.entrypoints=https
+      - traefik.http.routers.${PROJECT_NAME}-phpmyadmin-secure.entrypoints=websecure
       - traefik.http.routers.${PROJECT_NAME}-phpmyadmin-secure.tls=true
     depends_on:
       - db
@@ -84,7 +84,7 @@ services:
       - traefik.docker.network=local_traefik_webgateway
       - traefik.http.services.${PROJECT_NAME}-mailhog.loadbalancer.server.port=8025
       - traefik.http.routers.${PROJECT_NAME}-mailhog.rule=Host(`mailhog.${URL}`)
-      - traefik.http.routers.${PROJECT_NAME}-mailhog.entrypoints=http
+      - traefik.http.routers.${PROJECT_NAME}-mailhog.entrypoints=web
     networks:
       - web
       - default
