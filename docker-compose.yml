@@ -2,13 +2,13 @@ version: '3.1'
 
 services:
   wp:
-    image: noveni/wordpress:5.3-php7.3-apache-dev
+    image: noveni/wordpress:5.5-php7.3-apache-dev
     restart: always
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: local_db_user
       WORDPRESS_DB_PASSWORD: noveni
-      WORDPRESS_DB_NAME: local_wp_db
+      WORDPRESS_DB_NAME: "local_wp_${PROJECT_NAME}"
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
     volumes:
       - ./wp-core:/var/www/html
@@ -32,7 +32,7 @@ services:
     image: mysql:5.6
     restart: always
     environment:
-      MYSQL_DATABASE: local_wp_db
+      MYSQL_DATABASE: "local_wp_${PROJECT_NAME}"
       MYSQL_USER: local_db_user
       MYSQL_PASSWORD: noveni
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
