@@ -63,7 +63,7 @@ services:
 
   # USAGE: docker-compose run --rm wpcli plugin list
   wpcli:
-    image: wordpress:cli
+    image: noveni/wordpress:cli-php7.3
     depends_on:
       - db
       - wp
