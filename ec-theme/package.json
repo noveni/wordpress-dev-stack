@@ -9,7 +9,5 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "webpack": "^4.42.1"
-  }
+  "dependencies": {}
 }
