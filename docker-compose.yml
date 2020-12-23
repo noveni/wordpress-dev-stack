@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   wp:
-    image: noveni/wordpress:5.5-php7.3-apache-dev
+    image: noveni/wordpress:5.6-php7.3-apache-dev
     restart: always
     environment:
       WORDPRESS_DB_HOST: db
