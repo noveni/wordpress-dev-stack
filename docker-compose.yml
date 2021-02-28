@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   wp:
-    image: noveni/wordpress:5.5-php7.3-apache-dev
+    image: noveni/wordpress:5.6-php7.4-apache-dev
     restart: always
     environment:
       WORDPRESS_DB_HOST: db
@@ -13,9 +13,8 @@ services:
     volumes:
       - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
-      - ./wp/wp-content/uploads:/var/www/html/wp-content/uploads
-      - ./wp/wp-content/plugins:/var/www/html/wp-content/plugins
-      - ./wp/wp-content/languages:/var/www/html/wp-content/languages
+      - ./uploads:/var/www/html/wp-content/uploads
+      - ./plugins:/var/www/html/wp-content/plugins
     labels:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
@@ -70,9 +69,8 @@ services:
     volumes:
       - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
-      - ./wp/wp-content/uploads:/var/www/html/wp-content/uploads
-      - ./wp/wp-content/plugins:/var/www/html/wp-content/plugins
-      - ./wp/wp-content/languages:/var/www/html/wp-content/languages
+      - ./uploads:/var/www/html/wp-content/uploads
+      - ./plugins:/var/www/html/wp-content/plugins
     networks:
       - default
 
