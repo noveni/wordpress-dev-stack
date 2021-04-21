@@ -6,8 +6,8 @@ services:
     restart: always
     environment:
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: local_db_user
-      WORDPRESS_DB_PASSWORD: noveni
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: "local_wp_${PROJECT_NAME}"
       XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
     volumes:
@@ -32,8 +32,8 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: "local_wp_${PROJECT_NAME}"
-      MYSQL_USER: local_db_user
-      MYSQL_PASSWORD: noveni
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
     volumes:
       - ./.db:/var/lib/mysql

@@ -1,10 +1,9 @@
 # Private repo are located on Gitlab CI
 # This script exist here for archive and starter
-image: "tetraweb/php"
+image: misterio92/ci-php-node:2.0
 variables:
-  STAGING_REMOTE_DESTINATION_DIR: ./wp/wp-content
-  PRODUCTION_REMOTE_DESTINATION_DIR: ./wp/wp-content
-  CI_SYNC_TYPE: RSYNC
+  STAGING_REMOTE_DESTINATION_DIR: ./www/wp-content
+  PRODUCTION_REMOTE_DESTINATION_DIR: ./www/wp-content
   STAGE_URL: https://wpdevstack.ecrannoir.be
   PRODUCTION_URL: https://wpdevstack.ecrannoir.be
   THEME_DIR: wpdevstack
@@ -20,28 +19,30 @@ stages:
   - test
   - deploy
   
-staging_build:
+build_job:
   stage: build
   only: 
+    # - master
     - staging
+    - production
   before_script:
     - source .env
     - apt-get update
-    - apt-get install zip unzip
+    - apt-get install zip unzip -y
     - cd $THEME_NAME
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php
-    - php -r "unlink('composer-setup.php');"
-    - php composer.phar install
+    # - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    # - php composer-setup.php
+    # - php -r "unlink('composer-setup.php');"
+    # - php composer.phar install
     - npm install
   script:
     - echo "Here we are on build step"
-    - npm run build
+    - npm run production
     - echo $PROJECT_NAME
     - echo $THEME_NAME
   artifacts:
     paths:
-      - ./$THEME_DIR/dist/
+      - ./$THEME_DIR/assets/
       - ./$THEME_DIR/languages/
       - ./$THEME_DIR/vendor/
   environment:
@@ -49,11 +50,12 @@ staging_build:
     url: $STAGE_URL
 
 
-staging_ftp_deploy:
+ftp_deploy:
   stage: deploy
   only: 
     refs:
       - staging
+      # - master 
     variables:
       - $CI_SYNC_TYPE == "FTP"
   before_script:
@@ -75,8 +77,7 @@ staging_rsync_deploy:
   only:
     refs:
       - staging
-    variables:
-      - $CI_SYNC_TYPE == "RSYNC"
+      # - master 
   before_script:
     - source .env
     - 'which ssh-agent || ( apk --no-cache add rsync openssh-client )'
@@ -93,3 +94,26 @@ staging_rsync_deploy:
   environment:
     name: stage
     url: $STAGE_URL
+
+production_rsync_deploy:
+  stage: deploy
+  only:
+    refs:
+      - production
+      # - master 
+  before_script:
+    - source .env
+    - 'which ssh-agent || ( apk --no-cache add rsync openssh-client )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - echo "Here we are on Deploy step by rsync"
+    - rm -rf $THEME_NAME/src/ $THEME_NAME/package.json $THEME_NAME/package-lock.json $THEME_NAME/webpack.config.js $THEME_NAME/.stylelintrc.json
+    - echo "$PRODUCTION_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - ssh -p22 $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST "ls -al"
+    - rsync -azPqv --delete $THEME_NAME $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/themes
+    - rsync -azPqv wp/wp-content/plugins/ $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/plugins
+  environment:
+    name: production
+    url: $PRODUCTION_URL

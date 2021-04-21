@@ -177,8 +177,11 @@ temp/
 
 # End of https://www.gitignore.io/api/osx,linux,windows,node
 
-wp/wp-content/languages
-wp/wp-content/uploads
+languages
+uploads
+plugins/akismet/
+plugins/fakerpress/
+plugins/hello.php
 themes/
 wp-core/
 
