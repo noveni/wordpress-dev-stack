@@ -62,15 +62,22 @@ services:
 
   # USAGE: docker-compose run --rm wpcli plugin list
   wpcli:
-    image: noveni/wordpress:cli-php7.3
+    image: wordpress:cli-php7.4
     depends_on:
       - db
       - wp
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: "local_wp_${PROJECT_NAME}"
     volumes:
       - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
       - ./uploads:/var/www/html/wp-content/uploads
       - ./plugins:/var/www/html/wp-content/plugins
+    links:
+        - db
     networks:
       - default
 
