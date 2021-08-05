@@ -2,14 +2,14 @@ version: '3.1'
 
 services:
   wp:
-    image: noveni/wordpress:5.7-php7.4-apache-dev
+    image: noveni/wordpress:5.8-php7.4-apache-dev
     restart: always
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: "local_wp_${PROJECT_NAME}"
-      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
+      XDEBUG_CONFIG: client_host=host.docker.internal client_port=9000
     volumes:
       - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
