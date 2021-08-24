@@ -67,7 +67,7 @@ ftp_deploy:
     - rm -rf $THEME_NAME/src/ $THEME_NAME/package.json $THEME_NAME/package-lock.json $THEME_NAME/webpack.config.js $THEME_NAME/.stylelintrc.json
     - lftp --version
     - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete $THEME_NAME $STAGING_REMOTE_DESTINATION_DIR/themes; bye"
-    - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete wp/wp-content/plugins/ $STAGING_REMOTE_DESTINATION_DIR/plugins; bye"
+    # - lftp -e "open $FTP_ADDRESS; user $FTP_LOGIN $FTP_PASSWORD; mirror --reverse --verbose --delete plugins/ $STAGING_REMOTE_DESTINATION_DIR/plugins; bye"
   environment:
     name: stage
     url: $STAGE_URL
@@ -90,7 +90,7 @@ staging_rsync_deploy:
     - echo "$STAGING_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - ssh -p22 $STAGING_SSH_USER@$STAGING_SSH_HOST "ls -al"
     - rsync -azPqv --delete $THEME_NAME $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/themes
-    - rsync -azPqv wp/wp-content/plugins/ $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/plugins
+    # - rsync -azPqv plugins/ $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/plugins
   environment:
     name: stage
     url: $STAGE_URL
@@ -113,7 +113,7 @@ production_rsync_deploy:
     - echo "$PRODUCTION_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - ssh -p22 $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST "ls -al"
     - rsync -azPqv --delete $THEME_NAME $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/themes
-    - rsync -azPqv wp/wp-content/plugins/ $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/plugins
+    # - rsync -azPqv plugins/ $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/plugins
   environment:
     name: production
     url: $PRODUCTION_URL
