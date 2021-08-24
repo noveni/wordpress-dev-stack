@@ -99,9 +99,7 @@ temp/
 
 /languages
 /uploads
-plugins/akismet/
-plugins/fakerpress/
-plugins/hello.php
+plugins/
 themes/
 wp-core/
 
