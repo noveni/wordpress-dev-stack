@@ -2,19 +2,23 @@ version: '3.1'
 
 services:
   wp:
-    image: noveni/wordpress:5.8-php7.4-apache-dev
+    image: noveni/wordpress:5.9-php7.4-apache-dev
     restart: always
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: "local_wp_${PROJECT_NAME}"
+      WORDPRESS_DEBUG: "true"
       XDEBUG_CONFIG: client_host=host.docker.internal client_port=9000
     volumes:
       - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
       - ./uploads:/var/www/html/wp-content/uploads
       - ./plugins:/var/www/html/wp-content/plugins
+    extra_hosts:
+      - "${URL}:127.0.0.1"
+      - "www.${URL}:127.0.0.1"
     labels:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
@@ -44,8 +48,8 @@ services:
     image: noveni/phpmyadmin
     restart: always
     environment:
-      MYSQL_USER: "local_db_user"
-      MYSQL_PASSWORD: "noveni"
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
     labels:
       - traefik.enable=true
       - traefik.docker.network=local_traefik_webgateway
