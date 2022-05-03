@@ -22,7 +22,8 @@ stages:
 build_job:
   stage: build
   only: 
-    # - master
+    - main
+    - master
     - staging
     - production
   before_script:
@@ -30,10 +31,6 @@ build_job:
     - apt-get update
     - apt-get install zip unzip -y
     - cd $THEME_NAME
-    # - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    # - php composer-setup.php
-    # - php -r "unlink('composer-setup.php');"
-    # - php composer.phar install
     - npm install
   script:
     - echo "Here we are on build step"
@@ -76,8 +73,10 @@ staging_rsync_deploy:
   stage: deploy
   only:
     refs:
+      - main
+      - master
       - staging
-      # - master 
+      - production
   before_script:
     - source .env
     - 'which ssh-agent || ( apk --no-cache add rsync openssh-client )'
@@ -85,11 +84,11 @@ staging_rsync_deploy:
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - echo "Here we are on Deploy step by rsync"
-    - rm -rf $THEME_NAME/src/ $THEME_NAME/package.json $THEME_NAME/package-lock.json $THEME_NAME/webpack.config.js $THEME_NAME/.stylelintrc.json
     - echo "$STAGING_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - cd $THEME_NAME/ && rm -rf src/ .gitignore .stylelintignore .stylelintrc.json package.json package-lock.json README.md webpack.mix.js && cd ..
     - ssh -p22 $STAGING_SSH_USER@$STAGING_SSH_HOST "ls -al"
-    - rsync -azPqv --delete $THEME_NAME $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/themes
+    - pwd && ls -al
+    - pwd && rsync -azPqv --delete $THEME_NAME $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/themes
     # - rsync -azPqv plugins/ $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/plugins
   environment:
     name: stage
@@ -99,8 +98,9 @@ production_rsync_deploy:
   stage: deploy
   only:
     refs:
+      - main
       - production
-      # - master 
+      # - master
   before_script:
     - source .env
     - 'which ssh-agent || ( apk --no-cache add rsync openssh-client )'
@@ -108,9 +108,8 @@ production_rsync_deploy:
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - echo "Here we are on Deploy step by rsync"
-    - rm -rf $THEME_NAME/src/ $THEME_NAME/package.json $THEME_NAME/package-lock.json $THEME_NAME/webpack.config.js $THEME_NAME/.stylelintrc.json
     - echo "$PRODUCTION_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - cd $THEME_NAME/ && rm -rf src/ .gitignore .stylelintignore .stylelintrc.json package.json package-lock.json README.md webpack.mix.js && cd ..
     - ssh -p22 $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST "ls -al"
     - rsync -azPqv --delete $THEME_NAME $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/themes
     # - rsync -azPqv plugins/ $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/plugins
