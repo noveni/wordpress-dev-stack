@@ -85,7 +85,7 @@ staging_rsync_deploy:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
     - echo "$STAGING_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - cd $THEME_NAME/ && rm -rf src/ .gitignore .stylelintignore .stylelintrc.json package.json package-lock.json README.md webpack.mix.js && cd ..
+    - cd $THEME_NAME/ && rm -rf src/ .gitignore .npmrc .stylelintignore .stylelintrc.json package.json package-lock.json README.md webpack.mix.js && cd ..
     - ssh -p22 $STAGING_SSH_USER@$STAGING_SSH_HOST "ls -al"
     - pwd && ls -al
     - pwd && rsync -azPqv --delete $THEME_NAME $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/themes
@@ -109,7 +109,7 @@ production_rsync_deploy:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
     - echo "$PRODUCTION_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - cd $THEME_NAME/ && rm -rf src/ .gitignore .stylelintignore .stylelintrc.json package.json package-lock.json README.md webpack.mix.js && cd ..
+    - cd $THEME_NAME/ && rm -rf src/ .gitignore .npmrc .stylelintignore .stylelintrc.json package.json package-lock.json README.md webpack.mix.js && cd ..
     - ssh -p22 $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST "ls -al"
     - rsync -azPqv --delete $THEME_NAME $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/themes
     # - rsync -azPqv plugins/ $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/plugins
