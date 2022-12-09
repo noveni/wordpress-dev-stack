@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   wp:
-    image: noveni/wordpress:6.0-php7.4-apache-dev
+    image: noveni/wordpress:6.1-php7.4-apache-dev
     restart: always
     environment:
       WORDPRESS_DB_HOST: db
@@ -14,6 +14,7 @@ services:
     volumes:
       - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
+      - ./${THEME_NAME}-child:/var/www/html/wp-content/themes/${THEME_NAME}-child
       - ./uploads:/var/www/html/wp-content/uploads
       - ./plugins:/var/www/html/wp-content/plugins
     extra_hosts:
@@ -78,6 +79,7 @@ services:
     volumes:
       - ./wp-core:/var/www/html
       - ./${THEME_NAME}:/var/www/html/wp-content/themes/${THEME_NAME}
+      - ./${THEME_NAME}-child:/var/www/html/wp-content/themes/${THEME_NAME}-child
       - ./uploads:/var/www/html/wp-content/uploads
       - ./plugins:/var/www/html/wp-content/plugins
     links:
