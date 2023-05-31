@@ -1,0 +1,11 @@
+{
+    "cSpell.words": ["beigeamande"],
+    "editor.formatOnSave": true,
+    "[javascript]": {
+      "editor.formatOnSave": false
+    },
+    "[json]": {
+      "editor.formatOnSave": false
+    }
+  }
+  

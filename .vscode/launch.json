@@ -12,6 +12,7 @@
             "pathMappings": {
                 "/var/www/html": "${workspaceFolder}/wp-core",
                 "/var/www/html/wp-content/themes/THEMENAME": "${workspaceFolder}/THEMENAME",
+                "/var/www/html/wp-content/themes/THEMENAME-child": "${workspaceFolder}/THEMENAME-child",
                 "/var/www/html/wp-content/plugins": "${workspaceFolder}/plugins",
             },
             "xdebugSettings": {

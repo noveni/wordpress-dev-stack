@@ -7,6 +7,7 @@ variables:
   STAGE_URL: https://wpdevstack.ecrannoir.be
   PRODUCTION_URL: https://wpdevstack.ecrannoir.be
   THEME_DIR: wpdevstack
+  THEME_CHILD_DIR: wpdevstack-child
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -30,18 +31,20 @@ build_job:
     - source .env
     - apt-get update
     - apt-get install zip unzip -y
-    - cd $THEME_NAME
-    - npm install
+    - npm install --prefix ./$THEME_DIR
+    - npm install --prefix ./$THEME_CHILD_DIR
   script:
     - echo "Here we are on build step"
-    - npm run production
-    - echo $PROJECT_NAME
-    - echo $THEME_NAME
+    - npm run production --prefix ./$THEME_DIR
+    - npm run production --prefix ./$THEME_CHILD_DIR
   artifacts:
     paths:
       - ./$THEME_DIR/assets/
       - ./$THEME_DIR/languages/
       - ./$THEME_DIR/vendor/
+      - ./$THEME_CHILD_DIR/assets/
+      - ./$THEME_CHILD_DIR/languages/
+      - ./$THEME_CHILD_DIR/vendor/
   environment:
     name: stage
     url: $STAGE_URL
@@ -79,17 +82,24 @@ staging_rsync_deploy:
       - production
   before_script:
     - source .env
-    - 'which ssh-agent || ( apk --no-cache add rsync openssh-client )'
+    - "which ssh-agent || ( apk --no-cache add rsync openssh-client )"
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
+    - echo "CI Deploy with rsync"
     - echo "$STAGING_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - cd $THEME_NAME/ && rm -rf src/ .gitignore .npmrc .stylelintignore .stylelintrc.json package.json package-lock.json README.md webpack.mix.js && cd ..
     - ssh -p22 $STAGING_SSH_USER@$STAGING_SSH_HOST "ls -al"
-    - pwd && ls -al
-    - pwd && rsync -azPqv --delete $THEME_NAME $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/themes
-    # - rsync -azPqv plugins/ $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/plugins
+    - find ./$THEME_NAME -type d -exec chmod 755 {} \;
+    - find ./$THEME_NAME -type f -exec chmod 644 {} \;
+    - find ./$THEME_CHILD_DIR -type d -exec chmod 755 {} \;
+    - find ./$THEME_CHILD_DIR -type f -exec chmod 644 {} \;
+    - chmod 755 $THEME_NAME
+    - chmod 755 $THEME_CHILD_DIR
+    - ls -al $THEME_NAME
+    - ls -al $THEME_CHILD_DIR
+    - rsync -azPqv --delete --exclude-from='.rsyncignore' $THEME_NAME $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/themes
+    - rsync -azPqv --delete --exclude-from='.rsyncignore' $THEME_CHILD_DIR $STAGING_SSH_USER@$STAGING_SSH_HOST:$STAGING_REMOTE_DESTINATION_DIR/themes
   environment:
     name: stage
     url: $STAGE_URL
@@ -103,16 +113,24 @@ production_rsync_deploy:
       # - master
   before_script:
     - source .env
-    - 'which ssh-agent || ( apk --no-cache add rsync openssh-client )'
+    - "which ssh-agent || ( apk --no-cache add rsync openssh-client )"
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
+    - echo "CI Deploy Staging with rsync"
     - echo "$PRODUCTION_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - cd $THEME_NAME/ && rm -rf src/ .gitignore .npmrc .stylelintignore .stylelintrc.json package.json package-lock.json README.md webpack.mix.js && cd ..
     - ssh -p22 $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST "ls -al"
-    - rsync -azPqv --delete $THEME_NAME $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/themes
-    # - rsync -azPqv plugins/ $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/plugins
+    - find ./$THEME_NAME -type d -exec chmod 755 {} \;
+    - find ./$THEME_NAME -type f -exec chmod 644 {} \;
+    - find ./$THEME_CHILD_DIR -type d -exec chmod 755 {} \;
+    - find ./$THEME_CHILD_DIR -type f -exec chmod 644 {} \;
+    - chmod 755 $THEME_NAME
+    - chmod 755 $THEME_CHILD_DIR
+    - ls -al $THEME_NAME
+    - ls -al $THEME_CHILD_DIR
+    - rsync -azPqv --delete --exclude-from='.rsyncignore' $THEME_NAME $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/themes
+    - rsync -azPqv --delete --exclude-from='.rsyncignore' $THEME_CHILD_DIR $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:$PRODUCTION_REMOTE_DESTINATION_DIR/themes
   environment:
     name: production
     url: $PRODUCTION_URL
